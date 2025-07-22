@@ -1,6 +1,6 @@
 import logging
 import sys
-from studylm.utils.globals import LOG_LEVEL
+from studylm.config.constants import LOG_LEVEL
 
 
 def get_logger(name: str) -> logging.Logger:
@@ -10,7 +10,7 @@ def get_logger(name: str) -> logging.Logger:
     handler = logging.StreamHandler(sys.stdout)
 
     formatter = logging.Formatter(
-        "[%(asctime)s] [%(levelname)s] [%(filename)s] [%(lineno)d] [%(message)s]",
+        "[%(asctime)s] [%(levelname)s] [%(filename)s] [%(lineno)d] - %(message)s",
         "%H:%M:%S",
     )
 
