@@ -13,4 +13,3 @@ for G in tqdm(build_knowledge_graph(chunks), total=len(chunks)):
     net = Network()
     net.from_nx(G)
     net.save_graph("artifacts/graph.html")
-
