@@ -2,6 +2,7 @@ import streamlit as st
 from studylm.utils.logger import get_logger
 from studylm.studylm import StudyLM, remove_think_block
 from studylm.utils.file import to_tempfile
+from studylm.utils.parser import stream_parser
 
 
 logger = get_logger(__name__)
@@ -58,24 +59,28 @@ with col1:
 if "prompt_buffer" not in st.session_state:
     st.session_state.prompt_buffer = None
 
+
 with col2:
     st.header("AI Assistant")
     with st.container(height=720):
-        for msg in st.session_state.studylm.memory.chat_memory.messages:
-            role = "user" if msg.type == "human" else "assistant"
-            with st.chat_message(role):
-                if role == "human":
-                    st.markdown(msg.content)
-                else:
-                    st.markdown(remove_think_block(msg.content))
+        try:
+            for msg in st.session_state.studylm.get_state().values["messages"]:
+                role = "user" if msg.type == "human" else "assistant"
+                with st.chat_message(role):
+                    if role == "human":
+                        st.markdown(msg.content)
+                    else:
+                        st.markdown(remove_think_block(msg.content))
+        except Exception as e:
+            pass
 
         if st.session_state.prompt_buffer:
             _prompt = st.session_state.prompt_buffer
             with st.chat_message("user"):
                 st.markdown(_prompt)
             with st.chat_message("assistant"):
-                response = st.session_state.studylm.chain.invoke({"question": _prompt})
-                response = st.markdown(remove_think_block(response["answer"]))
+                response = st.session_state.studylm.stream(_prompt)
+                st.write_stream(stream_parser(response))
             st.session_state.prompt_buffer = None
 
     prompt = st.chat_input("Ask a question")
