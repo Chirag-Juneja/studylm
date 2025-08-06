@@ -11,6 +11,10 @@ from studylm.utils.logger import get_logger
 from studylm.config.constants import MODEL
 from studylm.core.pdf_parser import parse_pdf
 from studylm.tools.rag import VectorStore
+from studylm.tools.arxiv import arxiv_search
+from langchain.globals import set_verbose
+
+set_verbose(True)
 
 logger = get_logger(__name__)
 
@@ -28,7 +32,7 @@ class StudyLM:
 
     def load_graph(self):
         self.vectorstore = VectorStore()
-        self.tools = [self.vectorstore.as_tool()]
+        self.tools = [self.vectorstore.as_tool(), arxiv_search]
         self.llm_with_tools = self.llm.bind_tools(self.tools)
         self.memory = MemorySaver()
         self._build_graph()
@@ -40,8 +44,8 @@ class StudyLM:
         return True
 
     def chat(self, state: MessagesState):
-        response = (self.llm_with_tools.invoke(state["messages"]))
-        return {"messages": state["messages"]+[response]}
+        response = self.llm_with_tools.invoke(state["messages"])
+        return {"messages": state["messages"] + [response]}
 
     def _build_graph(self):
         workflow = StateGraph(MessagesState)
@@ -56,7 +60,7 @@ class StudyLM:
         response = self.graph.stream(
             {"messages": [{"role": "user", "content": query}]},
             self.config,
-            stream_mode="messages"
+            stream_mode="messages",
         )
         return response
 
