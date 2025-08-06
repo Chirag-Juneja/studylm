@@ -10,8 +10,7 @@ class VectorStore:
     def __init__(self):
         self.embeddings = OllamaEmbeddings(model=MODEL)
         self.persist_path = FAISS_PATH
-        self.faiss_index = faiss.IndexFlatL2(
-            len(self.embeddings.embed_query("test")))
+        self.faiss_index = faiss.IndexFlatL2(len(self.embeddings.embed_query("test")))
         self.vectorstore = FAISS(
             embedding_function=self.embeddings,
             index=self.faiss_index,
@@ -26,7 +25,7 @@ class VectorStore:
         return create_retriever_tool(
             self.as_retriever(k),
             "retrieve_context",
-            "Search and get context based on documents shared by the user"
+            "Search and get context based on documents shared by the user",
         )
 
     def add_documents(self, docs):
