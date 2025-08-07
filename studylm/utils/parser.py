@@ -1,3 +1,6 @@
+import re
+
+
 def stream_parser(stream):
     flag = True
     start_tag = "<think>"
@@ -14,3 +17,7 @@ def stream_parser(stream):
         if flag:
             continue
         yield token.content
+
+
+def remove_think_block(text: str) -> str:
+    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()

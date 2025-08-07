@@ -1,8 +1,8 @@
 import streamlit as st
 from studylm.utils.logger import get_logger
-from studylm.studylm import StudyLM, remove_think_block
+from studylm.studylm import StudyLM
 from studylm.utils.file import to_tempfile
-from studylm.utils.parser import stream_parser
+from studylm.utils.parser import stream_parser, remove_think_block
 
 
 logger = get_logger(__name__)
@@ -22,7 +22,7 @@ st.markdown("*Powered by Ollama with Intelligent Tool Selection*")
 st.markdown("---")
 
 
-col1, col2, col3 = st.columns([1, 1.5, 1])
+col1, col2, col3 = st.columns([1, 2, 1])
 
 with col1:
     st.header("📁 Document Library")
@@ -65,6 +65,8 @@ with col2:
     with st.container(height=720):
         try:
             for msg in st.session_state.studylm.get_state().values["messages"]:
+                if msg.type == "tool":
+                    continue
                 role = "user" if msg.type == "human" else "assistant"
                 with st.chat_message(role):
                     if role == "human":
@@ -87,3 +89,12 @@ with col2:
     if prompt:
         st.session_state.prompt_buffer = prompt
         st.rerun()
+
+with col3:
+    st.header("Relavent Youtube Videos")
+    try:
+        for link in st.session_state.studylm.get_state().values["yt_links"]:
+            st.video(link)
+    except:
+        pass
+
