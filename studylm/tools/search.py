@@ -1,5 +1,3 @@
-from langchain_community.tools import DuckDuckGoSearchResults
+from langchain_community.tools import DuckDuckGoSearchRun
 
-
-search = DuckDuckGoSearchResults(
-    regoin="in-en", max_results=5, output_format="list")
+search = DuckDuckGoSearchRun()

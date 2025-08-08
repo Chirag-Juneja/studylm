@@ -3,6 +3,7 @@ from langgraph.prebuilt import create_react_agent
 
 from studylm.tools.search import search
 from studylm.tools.arxiv import arxiv_search
+from studylm.tools.deepresearch import deepresearch
 from studylm.config.constants import MODEL
 
 
@@ -10,7 +11,7 @@ def get_reasearch_agent():
     llm = ChatOllama(model=MODEL, temperature=0.1, max_tokens=5000)
     research_agent = create_react_agent(
         model=llm,
-        tools=[search, arxiv_search],
+        tools=[search, arxiv_search, deepresearch],
         prompt=(
             "You are a research agent.\n\n"
             "INSTRUCTIONS:\n"
